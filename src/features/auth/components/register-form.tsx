@@ -1,13 +1,20 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import Link from "next/link";
-import { z } from "zod";
-import { useForm } from "react-hook-form";
-import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
 import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { z } from "zod";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import {
   Form,
   FormControl,
@@ -16,24 +23,17 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription
-} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { authClient } from "@/lib/auth-client";
 
-
-const registerFormSchema = z.object({
-  name: z.string().min(1, "Name is required"),
-  email: z.email("Invalid email address"),
-  password: z.string().min(8, "Password must be at least 8 characters"),
-  confirmPassword: z.string(),
-})
+const registerFormSchema = z
+  .object({
+    name: z.string().min(1, "Name is required"),
+    email: z.email("Invalid email address"),
+    password: z.string().min(8, "Password must be at least 8 characters"),
+    confirmPassword: z.string(),
+  })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match",
     path: ["confirmPassword"],
@@ -54,20 +54,23 @@ export function RegisterForm() {
   });
 
   const onSubmit = async (data: RegisterFormValues) => {
-    await authClient.signUp.email({
-      email: data.email,
-      name: data.name,
-      password: data.password,
-      callbackURL: "/",
-    }, {
-      onSuccess: () => {
-        toast.success("Account created successfully");
-        router.push("/");
+    await authClient.signUp.email(
+      {
+        email: data.email,
+        name: data.name,
+        password: data.password,
+        callbackURL: "/",
       },
-      onError: (error) => {
-        toast.error(error.error.message);
+      {
+        onSuccess: () => {
+          toast.success("Account created successfully");
+          router.push("/");
+        },
+        onError: (error) => {
+          toast.error(error.error.message);
+        },
       },
-    })
+    );
   };
 
   const isPending = form.formState.isSubmitting;
@@ -76,9 +79,7 @@ export function RegisterForm() {
     <div className="flex flex-col gap-6">
       <Card>
         <CardHeader className="text-center">
-          <CardTitle>
-            Register your account
-          </CardTitle>
+          <CardTitle>Register your account</CardTitle>
           <CardDescription>
             Enter your email and password to register your account
           </CardDescription>
@@ -94,7 +95,12 @@ export function RegisterForm() {
                     type="button"
                     disabled={isPending}
                   >
-                    <Image src="/icons/google.svg" alt="Google" width={20} height={20} />
+                    <Image
+                      src="/icons/google.svg"
+                      alt="Google"
+                      width={20}
+                      height={20}
+                    />
                     Continue with Google
                   </Button>
                 </div>
@@ -168,20 +174,13 @@ export function RegisterForm() {
                     )}
                   />
                   <FormMessage />
-                  <Button
-                    type="submit"
-                    className="w-full"
-                    disabled={isPending}
-                  >
+                  <Button type="submit" className="w-full" disabled={isPending}>
                     {isPending ? <Spinner /> : "Register"}
                   </Button>
                 </div>
                 <div className="text-center text-sm">
-                  Already have an account? {" "}
-                  <Link
-                    href="/login"
-                    className="underline underline-offset-4 "
-                  >
+                  Already have an account?{" "}
+                  <Link href="/login" className="underline underline-offset-4 ">
                     Login
                   </Link>
                 </div>
@@ -192,4 +191,4 @@ export function RegisterForm() {
       </Card>
     </div>
   );
-};   
+}

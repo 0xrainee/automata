@@ -1,14 +1,20 @@
 "use client";
 
-
 import { zodResolver } from "@hookform/resolvers/zod";
-import Link from "next/link";
-import { z } from "zod";
-import { useForm } from "react-hook-form";
-import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
 import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { z } from "zod";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import {
   Form,
   FormControl,
@@ -17,17 +23,9 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription
-} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { authClient } from "@/lib/auth-client";
-
 
 const loginFormSchema = z.object({
   email: z.email("Invalid email address"),
@@ -47,19 +45,22 @@ export function LoginForm() {
   });
 
   const onSubmit = async (data: LoginFormValues) => {
-    await authClient.signIn.email({
-      email: data.email,
-      password: data.password,
-      callbackURL: "/",
-    }, {
-      onSuccess: () => {
-        toast.success("Logged in successfully");
-        router.push("/");
+    await authClient.signIn.email(
+      {
+        email: data.email,
+        password: data.password,
+        callbackURL: "/",
       },
-      onError: (error) => {
-        toast.error(error.error.message);
+      {
+        onSuccess: () => {
+          toast.success("Logged in successfully");
+          router.push("/");
+        },
+        onError: (error) => {
+          toast.error(error.error.message);
+        },
       },
-    })
+    );
   };
 
   const isPending = form.formState.isSubmitting;
@@ -68,9 +69,7 @@ export function LoginForm() {
     <div className="flex flex-col gap-6">
       <Card>
         <CardHeader className="text-center">
-          <CardTitle>
-            Login to your account
-          </CardTitle>
+          <CardTitle>Login to your account</CardTitle>
           <CardDescription>
             Enter your email and password to login to your account
           </CardDescription>
@@ -86,7 +85,12 @@ export function LoginForm() {
                     type="button"
                     disabled={isPending}
                   >
-                    <Image src="/icons/google.svg" alt="Google" width={20} height={20} />
+                    <Image
+                      src="/icons/google.svg"
+                      alt="Google"
+                      width={20}
+                      height={20}
+                    />
                     Continue with Google
                   </Button>
                 </div>
@@ -125,16 +129,12 @@ export function LoginForm() {
                       </FormItem>
                     )}
                   />
-                  <Button
-                    type="submit"
-                    className="w-full"
-                    disabled={isPending}
-                  >
+                  <Button type="submit" className="w-full" disabled={isPending}>
                     {isPending ? <Spinner /> : "Login"}
                   </Button>
                 </div>
                 <div className="text-center text-sm">
-                  Don't have an account? {" "}
+                  Don't have an account?{" "}
                   <Link
                     href="/register"
                     className="underline underline-offset-4 "
@@ -143,7 +143,12 @@ export function LoginForm() {
                   </Link>
                 </div>
                 <div className="text-center text-sm">
-                  <Link href="/forgot-password" className="text-primary underline">Forgot password?</Link>
+                  <Link
+                    href="/forgot-password"
+                    className="text-primary underline"
+                  >
+                    Forgot password?
+                  </Link>
                 </div>
               </div>
             </form>
@@ -152,4 +157,4 @@ export function LoginForm() {
       </Card>
     </div>
   );
-};   
+}
