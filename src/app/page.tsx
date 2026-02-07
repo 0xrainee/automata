@@ -1,5 +1,13 @@
-export default function Home() {
+import { requireAuth } from "@/lib/auth-utils";
+
+const Page = async () => {
+
+  await requireAuth();
   return (
-    <div>hello vsauce, micheal here!</div>
+    <div className="">
+      Hi
+    </div>
   );
-}
+};
+
+export default Page;
